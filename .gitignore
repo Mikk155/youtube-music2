@@ -1,4 +1,7 @@
+music/
+
 bin/
 obj/
 
-debug.bat
+ffmpeg.exe
+yt-dlp.exe

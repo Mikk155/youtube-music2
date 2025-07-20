@@ -1,13 +1,18 @@
 {
     "files.exclude":
     {
-        "src/bin/": true,
-        "src/obj/": true
+        "music/": true,
+        "bin/": true,
+        "obj/": true,
+        "*.exe": true
     },
+
     "search.exclude":
     {
-        "src/bin/": true,
-        "src/obj/": true
+        "music/": true,
+        "bin/": true,
+        "obj/": true,
+        "*.exe": true
     },
 
     "[csharp]":
