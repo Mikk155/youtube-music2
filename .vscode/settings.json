@@ -1,0 +1,23 @@
+{
+    "files.exclude":
+    {
+        "src/bin/": true,
+        "src/obj/": true
+    },
+    "search.exclude":
+    {
+        "src/bin/": true,
+        "src/obj/": true
+    },
+
+    "[csharp]":
+    {
+        "editor.indentSize": 4,
+        "editor.formatOnPaste": false,
+        "editor.formatOnSave": false,
+        "editor.formatOnType": false,
+        "editor.codeLens": false
+    },
+
+    "color-highlight.matchRgbWithNoFunction": true
+}
