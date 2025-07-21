@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using YoutubeDLSharp;
+﻿using YoutubeDLSharp;
 using YoutubeDLSharp.Options;
 using Spectre.Console;
 
@@ -132,8 +128,8 @@ class Program
             AudioQuality = 0,
             RestrictFilenames = true,
             NoOverwrites = true,
-            Output = Path.Combine( MusicFolder, "%(title)s.%(ext)s" ),
-            PostprocessorArgs = "--remove-source-files"
+            Output = Path.Combine( MusicFolder, "%(title)s.%(ext)s" )/*,
+            PostprocessorArgs = "--remove-source-files"*/
         };
 
         Progress<DownloadProgress> progress = new Progress<DownloadProgress>( p => {
@@ -144,6 +140,11 @@ class Program
         Console.CancelKeyPress += ( _, e ) => { cts.Cancel(); e.Cancel = true; };
 
         RunResult<string> Result = await ytdl.RunWithOptions( URL, opts, progress: progress, ct: cts.Token );
+
+        foreach( string webm in Directory.GetFiles( MusicFolder, "*.webm" ) )
+        {
+            File.Delete( Path.Combine( MusicFolder, webm ) );
+        }
 
         if( Result.Success )
         {
