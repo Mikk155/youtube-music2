@@ -143,7 +143,7 @@ class Program
 
         if( Result.Success )
         {
-            AnsiConsole.Markup( $"#ff0]All done![/]\n" );
+            AnsiConsole.Markup( $"[#ff0]All done![/]\n" );
         }
         else
         {
