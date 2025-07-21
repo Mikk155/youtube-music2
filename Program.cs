@@ -35,5 +35,19 @@ class Program
         {
             await YoutubeDLSharp.Utils.DownloadFFmpeg();
         }
+
+        string? URL = args.Length > 0 ? args[0] : null;
+
+        while( true )
+        {
+            if( string.IsNullOrWhiteSpace( URL ) || !URL.Contains( "youtube.com/" ) )
+            {
+                AnsiConsole.MarkupLine( $"Input a valid [#ffA500]youtube[/] playlist or video url" );
+                URL = Console.ReadLine();
+                continue;
+            }
+
+            break;
+        }
     }
 }
