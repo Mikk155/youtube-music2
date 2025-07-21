@@ -18,7 +18,7 @@ class Program
     {
         if( !File.Exists( Path.Combine( Workspace, $"{executable}.exe" ) ) )
         {
-            Console.WriteLine( $"ERROR: {executable}.exe was not found at {Workspace}" );
+            AnsiConsole.MarkupLine( $"[#ffA500]{executable}.exe[/] was not found at [#ffA500]{Workspace}[/]\nDownloading [#ffA500]{Workspace}/{executable}.exe[/]" );
             return false;
         }
         return true;
