@@ -14,19 +14,26 @@ class Program
     public static string MusicFolder =>
         Path.Combine( Workspace, "music" );
 
-    public static void HasExtension( string executable )
+    public static bool HasExtension( string executable )
     {
         if( !File.Exists( Path.Combine( Workspace, $"{executable}.exe" ) ) )
         {
             Console.WriteLine( $"ERROR: {executable}.exe was not found at {Workspace}" );
-            Console.ReadLine();
-            Environment.Exit(0);
+            return false;
         }
+        return true;
     }
 
     static async Task Main( string[] args )
     {
-        HasExtension( "yt-dlp" );
-        HasExtension( "ffmpeg" );
+        if( !HasExtension( "yt-dlp" ) )
+        {
+            await YoutubeDLSharp.Utils.DownloadYtDlp();
+        }
+
+        if( !HasExtension( "ffmpeg" ) )
+        {
+            await YoutubeDLSharp.Utils.DownloadFFmpeg();
+        }
     }
 }
