@@ -68,6 +68,62 @@ class Program
 
         AudioConversionFormat AudioFormat = AudioConversionFormat.Mp3;
 
+        int CustomAudioFormat = Array.IndexOf( args, "-format" );
+
+        if( CustomAudioFormat >= 0 && CustomAudioFormat < args.Length - 1 )
+        {
+            string CustomAudioFormatName = args[ CustomAudioFormat + 1 ];
+
+            switch( CustomAudioFormatName )
+            {
+                case "0":
+                case "best": {
+                    AudioFormat = AudioConversionFormat.Best;
+                    break;
+                }
+                case "1":
+                case "aac": {
+                    AudioFormat = AudioConversionFormat.Aac;
+                    break;
+                }
+                case "2":
+                case "flac": {
+                    AudioFormat = AudioConversionFormat.Flac;
+                    break;
+                }
+                case "3":
+                case "mp3": {
+                    AudioFormat = AudioConversionFormat.Mp3;
+                    break;
+                }
+                case "4":
+                case "m4a": {
+                    AudioFormat = AudioConversionFormat.M4a;
+                    break;
+                }
+                case "5":
+                case "opus": {
+                    AudioFormat = AudioConversionFormat.Opus;
+                    break;
+                }
+                case "6":
+                case "vorbis": {
+                    AudioFormat = AudioConversionFormat.Vorbis;
+                    break;
+                }
+                case "7":
+                case "wav": {
+                    AudioFormat = AudioConversionFormat.Wav;
+                    break;
+                }
+                default:
+                {
+                    Exit( $"Invalid audio format \"[#ff0]{CustomAudioFormatName}[/]\"" );
+                    break;
+                }
+            }
+        }
+
         OptionSet opts = new OptionSet{
             ExtractAudio = true,
             AudioFormat = AudioFormat,
