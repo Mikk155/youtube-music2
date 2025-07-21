@@ -24,6 +24,15 @@ class Program
         return true;
     }
 
+    static void Exit( string? Message = null, int ExitCode = 1 )
+    {
+        if( Message is not null )
+        {
+            AnsiConsole.MarkupLine( $"[#ff0000]{Message}[/]" );
+        }
+        Environment.Exit(ExitCode);
+    }
+
     static async Task Main( string[] args )
     {
         if( !HasExtension( "yt-dlp" ) )
@@ -49,5 +58,22 @@ class Program
 
             break;
         }
+
+        YoutubeDL ytdl = new YoutubeDL{
+            OutputFolder = MusicFolder,
+            IgnoreDownloadErrors = args.Contains( "-ignore" )
+        };
+
+        Directory.CreateDirectory( ytdl.OutputFolder );
+
+        AudioConversionFormat AudioFormat = AudioConversionFormat.Mp3;
+
+        OptionSet opts = new OptionSet{
+            ExtractAudio = true,
+            AudioFormat = AudioFormat,
+            AudioQuality = 0,
+            RestrictFilenames = true,
+            NoOverwrites = true
+        };
     }
 }
