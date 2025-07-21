@@ -129,7 +129,8 @@ class Program
             AudioFormat = AudioFormat,
             AudioQuality = 0,
             RestrictFilenames = true,
-            NoOverwrites = true
+            NoOverwrites = true,
+            Output = Path.Combine( MusicFolder, "%(title)s.%(ext)s" )
         };
 
         Progress<DownloadProgress> progress = new Progress<DownloadProgress>( p => {
