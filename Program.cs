@@ -64,6 +64,8 @@ class Program
             IgnoreDownloadErrors = args.Contains( "-ignore" )
         };
 
+        ytdl.FFmpegPath = Path.Combine( Workspace, "ffmpeg.exe" );
+
         Directory.CreateDirectory( ytdl.OutputFolder );
 
         AudioConversionFormat AudioFormat = AudioConversionFormat.Mp3;
@@ -130,7 +132,8 @@ class Program
             AudioQuality = 0,
             RestrictFilenames = true,
             NoOverwrites = true,
-            Output = Path.Combine( MusicFolder, "%(title)s.%(ext)s" )
+            Output = Path.Combine( MusicFolder, "%(title)s.%(ext)s" ),
+            PostprocessorArgs = "--remove-source-files"
         };
 
         Progress<DownloadProgress> progress = new Progress<DownloadProgress>( p => {
