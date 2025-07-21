@@ -49,7 +49,7 @@ class Program
 
         while( true )
         {
-            if( string.IsNullOrWhiteSpace( URL ) || !URL.Contains( "youtube.com/" ) )
+            if( string.IsNullOrWhiteSpace( URL ) || ( !URL.Contains( "youtube.com/" ) && !URL.Contains( "youtu.be/" ) ))
             {
                 AnsiConsole.MarkupLine( $"Input a valid [#ffA500]youtube[/] playlist or video url" );
                 URL = Console.ReadLine();
@@ -131,5 +131,23 @@ class Program
             RestrictFilenames = true,
             NoOverwrites = true
         };
+
+        Progress<DownloadProgress> progress = new Progress<DownloadProgress>( p => {
+            AnsiConsole.MarkupLine( $"[#ff0]{p.Progress:P0}[/] of [#ff0]{p.TotalDownloadSize ?? "?"}[/]\n{p.DownloadSpeed ?? "--"} – [#ff0]{p.State}[/]" );
+        } );
+
+        CancellationTokenSource cts = new CancellationTokenSource();
+        Console.CancelKeyPress += ( _, e ) => { cts.Cancel(); e.Cancel = true; };
+
+        RunResult<string> Result = await ytdl.RunWithOptions( URL, opts, progress: progress, ct: cts.Token );
+
+        if( Result.Success )
+        {
+            AnsiConsole.Markup( $"#ff0]All done![/]\n" );
+        }
+        else
+        {
+            Exit( Result.ErrorOutput.ToString() );
+        }
     }
 }
