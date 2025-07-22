@@ -4,13 +4,15 @@ using Spectre.Console;
 
 class Program
 {
-    public static string Workspace =>
+    static bool ShowProgress;
+
+    static string Workspace =>
         Directory.GetCurrentDirectory();
 
-    public static string MusicFolder =>
+    static string MusicFolder =>
         Path.Combine( Workspace, "music" );
 
-    public static bool HasExtension( string executable )
+    static bool HasExtension( string executable )
     {
         if( !File.Exists( Path.Combine( Workspace, $"{executable}.exe" ) ) )
         {
@@ -57,10 +59,12 @@ class Program
 
         YoutubeDL ytdl = new YoutubeDL{
             OutputFolder = MusicFolder,
+            FFmpegPath = Path.Combine( Workspace, "ffmpeg.exe" ),
+            YoutubeDLPath = Path.Combine( Workspace, "yt-dlp.exe" ),
             IgnoreDownloadErrors = args.Contains( "-ignore" )
         };
 
-        ytdl.FFmpegPath = Path.Combine( Workspace, "ffmpeg.exe" );
+        ShowProgress = !args.Contains( "-hideprogress" );
 
         Directory.CreateDirectory( ytdl.OutputFolder );
 
@@ -126,33 +130,73 @@ class Program
             ExtractAudio = true,
             AudioFormat = AudioFormat,
             AudioQuality = 0,
-            RestrictFilenames = true,
             NoOverwrites = true,
             Output = Path.Combine( MusicFolder, "%(title)s.%(ext)s" )/*,
             PostprocessorArgs = "--remove-source-files"*/
         };
 
-        Progress<DownloadProgress> progress = new Progress<DownloadProgress>( p => {
-            AnsiConsole.MarkupLine( $"[#ff0]{p.Progress:P0}[/] of [#ff0]{p.TotalDownloadSize ?? "?"}[/]\n{p.DownloadSpeed ?? "--"} – [#ff0]{p.State}[/]" );
+        AnsiConsole.MarkupLine( $"Fetching [#ffA500]{URL}[/]" );
+
+        string PlayListName = ( await ytdl.RunVideoDataFetch( URL ) ).Data?.Title ?? "Downloading";
+
+        AnsiConsole.MarkupLine( $"Start of download [#ffA500]{PlayListName}[/]" );
+
+        Progress<DownloadProgress> progress = new Progress<DownloadProgress>( p =>
+        {
+            string speed = p.DownloadSpeed ?? "--";
+            string progress = $"{p.Progress:P0}";
+            string Totalsize = p.TotalDownloadSize ?? "?";
+
+            string? FileName = p.Data;
+
+            if( FileName is not null && !string.IsNullOrWhiteSpace( FileName ) )
+            {
+                AnsiConsole.MarkupLine( $"Starting download [#ffA500]{Path.GetFileNameWithoutExtension(FileName)}.{AudioFormat.ToString()}[/]" );
+            }
+
+            switch( p.State )
+            {
+                case DownloadState.Downloading:
+                {
+                    if( ShowProgress )
+                    {
+                        // AnsiConsole.MarkupLine( $"speed: [#f00]{speed}[/] – [#ff0]{progress}[/] of [#ff0]{Totalsize}[/] time: [#00f]{p.ETA}[/]" );
+                        AnsiConsole.MarkupLine( $"[#ff0]{progress}[/] of [#f00]{Totalsize}[/]" );
+                        // -TODO Display the progress on the same line? I give up for today :)
+                    }
+                    break;
+                }
+                case DownloadState.PostProcessing:
+                {
+                    if( ShowProgress )
+                    {
+                        AnsiConsole.MarkupLine( $"[#f1f]Finished downloading[/]" );
+                    }
+                    break;
+                }
+                case DownloadState.PreProcessing:
+                case DownloadState.Success:
+                case DownloadState.Error:
+                case DownloadState.None:
+                default:
+                {
+                    break;
+                }
+            }
         } );
 
         CancellationTokenSource cts = new CancellationTokenSource();
-        Console.CancelKeyPress += ( _, e ) => { cts.Cancel(); e.Cancel = true; };
+        Console.CancelKeyPress += (_, e) => { cts.Cancel(); e.Cancel = true; };
 
-        RunResult<string> Result = await ytdl.RunWithOptions( URL, opts, progress: progress, ct: cts.Token );
+        RunResult<string> result = await ytdl.RunWithOptions( URL, opts, progress: progress, ct: cts.Token );
 
-        foreach( string webm in Directory.GetFiles( MusicFolder, "*.webm" ) )
+        if( result.Success )
         {
-            File.Delete( Path.Combine( MusicFolder, webm ) );
-        }
-
-        if( Result.Success )
-        {
-            AnsiConsole.Markup( $"[#ff0]All done![/]\n" );
+            AnsiConsole.MarkupLine( $"[#0f0]Download complete![/]" );
         }
         else
         {
-            Exit( Result.ErrorOutput.ToString() );
+            Exit(result.ErrorOutput.ToString());
         }
     }
 }
