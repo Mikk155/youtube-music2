@@ -135,11 +135,11 @@ class Program
             PostprocessorArgs = "--remove-source-files"*/
         };
 
-        AnsiConsole.MarkupLine( $"Fetching [#ffA500]{URL}[/]" );
+        AnsiConsole.MarkupLine( $"Fetching [#ffA500]{URL.RemoveMarkup()}[/]" );
 
         string PlayListName = ( await ytdl.RunVideoDataFetch( URL ) ).Data?.Title ?? "Downloading";
 
-        AnsiConsole.MarkupLine( $"Start of download [#ffA500]{PlayListName}[/]" );
+        AnsiConsole.MarkupLine( $"Start of download [#ffA500]{PlayListName.RemoveMarkup()}[/]" );
 
         Progress<DownloadProgress> progress = new Progress<DownloadProgress>( p =>
         {
@@ -151,7 +151,7 @@ class Program
 
             if( FileName is not null && !string.IsNullOrWhiteSpace( FileName ) )
             {
-                AnsiConsole.MarkupLine( $"Starting download [#ffA500]{Path.GetFileNameWithoutExtension(FileName)}.{AudioFormat.ToString()}[/]" );
+                AnsiConsole.MarkupLine( $"Starting download [#ffA500]{Path.GetFileNameWithoutExtension(FileName).RemoveMarkup()}.{AudioFormat.ToString()}[/]" );
             }
 
             switch( p.State )
