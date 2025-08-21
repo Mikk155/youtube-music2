@@ -26,7 +26,9 @@ class Program
     {
         if( Message is not null )
         {
-            AnsiConsole.MarkupLine( $"[#ff0000]{Message}[/]" );
+            AnsiConsole.MarkupLine( $"[#ff0000]Error:[/]" );
+            Console.WriteLine( Message );
+            Console.ReadLine();
         }
         Environment.Exit(ExitCode);
     }
