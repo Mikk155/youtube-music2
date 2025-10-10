@@ -1,5 +1,9 @@
 # youtube-music2
 
+> ⚠️ NOTE: If the program freezes you may need to manually delete ``yt-dlp.exe`` as a workaround. this happens due to youtube itself blocking it.
+
+---
+
 - ### Download music from a whole youtube playlist
 
 ---
